@@ -11,7 +11,7 @@
 
 ## Vulnerability Info
 
-- Class: [CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')](https://cwe.mitre.org/data/definitions/79.html)
+- Weakness: [CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')](https://cwe.mitre.org/data/definitions/79.html)
 - CVE: N/A
 
 ## Summary
