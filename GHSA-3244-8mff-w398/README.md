@@ -69,10 +69,14 @@ basePath: /poc
 
 An attacker can execute arbitrary JavaScript in the context of a logged-in Gotify user who browses to a crafted URL and exploit this to gain administrative access to the Gotify Web UI if it is reachable and the victim is an administrator.
 
+## Recommendations
+
+If you run a Gotify server, you should update to Gotify version 2.2.3 or above.
+
 ## Timeline
 
 - 2023-01-10: Vulnerability discovery
 - 2023-01-10: Advisory sent to vendor
 - 2023-01-10: Vendor acknowledgment
 - 2023-01-10: Vendor releases fix in v2.2.3 ([PR](https://github.com/gotify/server/pull/541), [release](https://github.com/gotify/server/releases/tag/v2.2.3))
-- 2023-01-10: Public disclosure via [GitHub Security Advisory](https://github.com/advisories/GHSA-3244-8mff-w398)
+- 2023-01-10: Vendor public disclosure via [GitHub Security Advisory](https://github.com/advisories/GHSA-3244-8mff-w398)
