@@ -8,3 +8,5 @@
 You can subscribe to this repo's [RSS feed](https://github.com/40826d/advisories/commits.atom) to be notified when the following technical security advisories are published:
 
 - CVE-2023-27588: Unauthenticated path traversal in Hasura GraphQL Engine ([vendor advisory](https://github.com/hasura/graphql-engine/security/advisories/GHSA-c9rw-rw2f-mj4x))
+- CVE-2023-27591: Unauthenticated user can bypass allowed networks check to obtain Prometheus metrics from Miniflux ([vendor advisory](https://github.com/miniflux/v2/security/advisories/GHSA-3qjf-qh38-x73v))
+- CVE-2023-27592: Stored XSS in Miniflux when opening broken image due to unescaped ServerError in proxy handler ([vendor advisory](https://github.com/miniflux/v2/security/advisories/GHSA-mqqg-xjhj-wfgw))
