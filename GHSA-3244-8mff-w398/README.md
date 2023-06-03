@@ -25,7 +25,7 @@ Until [v2.2.3](https://github.com/gotify/server/pull/541), the Swagger UI versio
 <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.20.5/swagger-ui-standalone-preset.js"></script>
 ```
 
-Gotify versions before 2.2.3 are thus susceptible to reflected XSS attacks via the `/docs` route when loading external Swagger config files from the `url` query string parameter.
+Gotify versions before 2.2.3 are thus susceptible to reflected XSS attacks via the `/docs` route when loading external Swagger config files via the `url` query string parameter.
 
 Since Gotify stores the logged-in user's auth token in [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage#description) and accepts it via the `X-Gotify-Key` header, reflected XSS on Gotify can result in admin account takeover if a logged-in admin browses to a crafted URL.
 
@@ -67,7 +67,7 @@ basePath: /poc
 
 ## Impact
 
-An attacker can execute arbitrary JavaScript in the context of a logged-in Gotify user who browses to a crafted URL and exploit this to gain administrative access to the Gotify Web UI if it is reachable and the victim is an administrator.
+An attacker can execute arbitrary JavaScript in the context of a logged-in Gotify user who browses to a crafted URL and exploit this to gain administrative access to the Gotify Web UI if it is externally reachable and the victim is an administrator.
 
 ## Recommendations
 
@@ -75,8 +75,9 @@ If you run a Gotify server, you should update to Gotify version 2.2.3 or above.
 
 ## Timeline
 
-- 2023-01-10: Vulnerability discovery
-- 2023-01-10: Advisory sent to vendor
-- 2023-01-10: Vendor acknowledgment
-- 2023-01-10: Vendor releases fix in v2.2.3 ([PR](https://github.com/gotify/server/pull/541), [release](https://github.com/gotify/server/releases/tag/v2.2.3))
-- 2023-01-10: Vendor public disclosure via [GitHub Security Advisory](https://github.com/advisories/GHSA-3244-8mff-w398)
+- 2023-01-10: Vulnerability discovered
+- 2023-01-10: Vulnerability reported to vendor
+- 2023-01-10: Vendor acknowledged receipt of advisory
+- 2023-01-10: Vendor committed fix ([PR #541](https://github.com/gotify/server/pull/541))
+- 2023-01-10: Vendor released fix ([v2.2.3](https://github.com/gotify/server/releases/tag/v2.2.3))
+- 2023-01-10: Vendor disclosed via [GitHub Security Advisory](https://github.com/advisories/GHSA-3244-8mff-w398)
